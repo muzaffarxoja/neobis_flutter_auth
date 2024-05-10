@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -15,13 +17,19 @@ class _MyFormState extends State<MyForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController userName = TextEditingController();
   final TextEditingController passWord = TextEditingController();
+  bool userExists = false;
 
-  void load() async {
+  Future check(userName) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      //password = prefs.getString(username) ?? '';
-    });
+    if (prefs.containsKey(userName)) {
+      setState(() {
+        userExists = true;
+      });
+    } else {
+      setState(() {
+        userExists = false;
+      });
+    }
   }
 
   Future save(String userName, String passWord) async {
@@ -41,6 +49,10 @@ class _MyFormState extends State<MyForm> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter user name';
+              }
+              check(value);
+              if (userExists) {
+                return 'User with such name exists';
               }
               return null;
             },
