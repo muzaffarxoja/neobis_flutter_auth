@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neobis_flutter_auth/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +14,7 @@ class _MyFormState extends State<MyForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController userName = TextEditingController();
   final TextEditingController passWord = TextEditingController();
+  final TextEditingController passWordConfirm = TextEditingController();
   bool userExists = false;
 
   Future check(userName) async {
@@ -72,6 +70,21 @@ class _MyFormState extends State<MyForm> {
           const SizedBox(
             height: 10,
           ),
+          TextFormField(
+            controller: passWordConfirm,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter password';
+              }
+              if (passWord != passWordConfirm) {
+                return 'Please enter same password';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -80,6 +93,7 @@ class _MyFormState extends State<MyForm> {
                     const SnackBar(content: Text('Processing Data')),
                   );
                   save(userName.text, passWord.text);
+                  context.go(authorization);
                 }
               },
               child: const Text('Submit'),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neobis_flutter_auth/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,8 +12,19 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController passWordFirst = TextEditingController();
-  final TextEditingController passWordSecond = TextEditingController();
+
+  Future check(userName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(userName)) {
+      setState(() {
+        // userExists = true;
+      });
+    } else {
+      setState(() {
+        // userExists = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +33,13 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         children: [
           TextFormField(
-            controller: passWordFirst,
+            decoration: const InputDecoration(
+              label: Text('Input user name'),
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter password';
+                return 'Please enter user name';
               }
-
               return null;
             },
           ),
@@ -34,14 +47,11 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextFormField(
-            controller: passWordSecond,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please retype password';
+                return 'Please enter password';
               }
-              if (passWordFirst != passWordSecond) {
-                return 'Please enter same password';
-              }
+
               return null;
             },
           ),
@@ -56,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SnackBar(content: Text('Processing Data')),
                   );
                 }
-                context.go(authorization);
+                context.go(home);
               },
               child: const Text('Submit'),
             ),
