@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neobis_flutter_auth/main.dart';
+import 'package:neobis_flutter_auth/models/user_password.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +13,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController userNameInput = TextEditingController();
+  final TextEditingController passWordInput = TextEditingController();
+
+  bool isLoginValid(String username, String password) {
+    for (var userPassword in userdata) {
+      if (userPassword.user == username && userPassword.passWord == password) {
+        return true; // Username and password match found
+      }
+    }
+    return false; // Username and password match not found
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: [
             TextFormField(
+              controller: userNameInput,
               decoration: const InputDecoration(
                 label: Text('Input user name'),
               ),
@@ -34,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 10,
             ),
             TextFormField(
+              controller: passWordInput,
               decoration: const InputDecoration(
                 label: Text('Input password'),
               ),
@@ -56,8 +71,15 @@ class _LoginPageState extends State<LoginPage> {
                       const SnackBar(content: Text('Processing Data')),
                     );
                   }
-
-                  context.go(home);
+                  if (isLoginValid(userNameInput.text, passWordInput.text)) {
+                    context.go(home);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login or password is incorrect'),
+                      ),
+                    );
+                  }
                 },
                 child: const Text('Sign in'),
               ),
