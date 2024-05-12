@@ -3,6 +3,7 @@ import 'package:neobis_flutter_auth/pages/home.dart';
 import 'package:neobis_flutter_auth/pages/registration.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neobis_flutter_auth/pages/authorization.dart';
+import 'package:neobis_flutter_auth/utils/shared_prefs.dart';
 
 const String registration = "/registration";
 const String authorization = '/authorization';
@@ -26,8 +27,12 @@ final _router = GoRouter(
   ],
 );
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefs().init();
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
